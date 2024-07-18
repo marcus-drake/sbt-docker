@@ -8,15 +8,30 @@ import sbtdocker.staging.DefaultDockerfileProcessor
 object DockerSettings {
 
   lazy val baseDockerSettings = Seq(
+    cleanStageDir := {
+      val stageDir = (docker / target).value
+      DockerBuild.clean(stageDir)
+    },
+    writeDockerfile := {
+      val stageDir = (docker / target).value
+      val dockerfile = (docker / DockerKeys.dockerfile).value
+      val _ = cleanStageDir.value
+      dockerfile match {
+        case NativeDockerfile(file) => file
+        case dockerfileLike: DockerfileLike =>
+          val staged = DefaultDockerfileProcessor(dockerfileLike, stageDir)
+          DockerBuild.prepareFiles(staged)
+          DockerBuild.createDockerfile(staged, stageDir)
+      }
+    },
     docker := {
       val log = Keys.streams.value.log
       val dockerPath = (docker / DockerKeys.dockerPath).value
       val buildOptions = (docker / DockerKeys.buildOptions).value
-      val stageDir = (docker / target).value
-      val dockerfile = (docker / DockerKeys.dockerfile).value
       val imageNames = (docker / DockerKeys.imageNames).value
       val buildArguments = (docker / DockerKeys.dockerBuildArguments).value
-      DockerBuild(dockerfile, DefaultDockerfileProcessor, imageNames, buildOptions, buildArguments, stageDir, dockerPath, log)
+      val dockerfilePath = (docker / DockerKeys.writeDockerfile).value
+      DockerBuild.buildAndTag(imageNames, dockerfilePath, dockerPath, buildOptions, buildArguments, log)
     },
     dockerPush := {
       val log = Keys.streams.value.log
