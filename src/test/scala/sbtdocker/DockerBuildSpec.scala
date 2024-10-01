@@ -148,6 +148,21 @@ class DockerBuildSpec extends AnyFreeSpec with Matchers {
       DockerBuild.parseImageId(lines) shouldEqual Some(ImageId("688f3de768e18bed863a7357e48b3d11a546ec2064cbcce2ffbe63343525a3a0"))
     }
 
+    "Docker build output with containerd enabled" in {
+      val lines = Seq(
+        "#6 exporting to image",
+        "#6 exporting layers done",
+        "#6 exporting manifest sha256:beab5e36974d6ddfd65cfd0f8fda6283c5bb80ddded4b15f4e237fa255d38d18 done",
+        "#6 exporting config sha256:d8526f6dc6b4563ab8cebb8d27d5b58b75ef7f1be79e0407e543d2a115c4d778 done",
+        "#6 exporting attestation manifest sha256:51bacaed02635c5a0c3773d949583cae2452f68194b351335000befa3efda057 done",
+        "#6 exporting manifest list sha256:4df93e677e2cdf30b65bd92709eab5524c4014a9e022e6f876d151e37cd5d412 done",
+        "#6 naming to moby-dangling@sha256:4df93e677e2cdf30b65bd92709eab5524c4014a9e022e6f876d151e37cd5d412 done",
+        "#6 unpacking to moby-dangling@sha256:4df93e677e2cdf30b65bd92709eab5524c4014a9e022e6f876d151e37cd5d412 done",
+        "#6 DONE 0.0s"
+      )
+      DockerBuild.parseImageId(lines) shouldEqual Some(ImageId("4df93e677e2cdf30b65bd92709eab5524c4014a9e022e6f876d151e37cd5d412"))
+    }
+
     "Podman build output" in {
       val lines = Seq(
         "--> dada5485d85",
