@@ -19,6 +19,7 @@ object DockerTag {
     log.info(s"Tagging image $id with name: $name")
 
     val command = dockerPath :: "tag" :: id.id :: name.toString :: Nil
+    log.debug(s"Running command: '${command.mkString(" ")}'")
 
     val processOutput = Process(command).lines(processLogger)
     processOutput.foreach { line =>
