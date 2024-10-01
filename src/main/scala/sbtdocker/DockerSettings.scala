@@ -42,13 +42,11 @@ object DockerSettings {
         """.stripMargin)
     },
     docker / target := target.value / "docker",
-    docker / imageName := {
+    docker / imageNames := {
       val organisation = Option(Keys.organization.value).filter(_.nonEmpty)
       val name = Keys.normalizedName.value
-      ImageName(namespace = organisation, repository = name)
-    },
-    docker / imageNames := {
-      Seq((docker / imageName).value)
+      val imageName = ImageName(namespace = organisation, repository = name)
+      Seq(imageName)
     },
     docker / dockerPath := sys.env.get("DOCKER").filter(_.nonEmpty).getOrElse("docker"),
     docker / buildOptions := BuildOptions(),
@@ -68,7 +66,7 @@ object DockerSettings {
       (docker / Keys.mainClass).or(Compile / Keys.packageBin / Keys.mainClass).value
     },
     docker / dockerfile := {
-      val maybeMainClass = Keys.mainClass.in(docker).value
+      val maybeMainClass = (docker / Keys.mainClass).value
       maybeMainClass match {
         case None =>
           sys.error(

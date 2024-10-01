@@ -1,6 +1,6 @@
 package sbtdocker
 
-import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.text.StringEscapeUtils
 import sbtdocker.staging.SourceFile
 
 import scala.concurrent.duration.FiniteDuration
