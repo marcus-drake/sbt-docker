@@ -42,6 +42,13 @@ final case class BuildOptions(
   additionalArguments: Seq[String] = Seq.empty
 )
 
+sealed abstract class Platform(val value: String) {}
+
+object Platform {
+  final case object LinuxAmd64 extends Platform("linux/amd64")
+  final case object LinuxArm64 extends Platform("linux/arm64")
+}
+
 /**
   * Id of an Docker image.
   * @param id Id as a hexadecimal digit string.

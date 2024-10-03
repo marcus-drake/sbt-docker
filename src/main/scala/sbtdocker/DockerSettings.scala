@@ -12,11 +12,12 @@ object DockerSettings {
       val log = Keys.streams.value.log
       val dockerPath = (docker / DockerKeys.dockerPath).value
       val buildOptions = (docker / DockerKeys.buildOptions).value
+      val platforms = (docker / DockerKeys.platforms).value
       val stageDir = (docker / target).value
       val dockerfile = (docker / DockerKeys.dockerfile).value
       val imageNames = (docker / DockerKeys.imageNames).value
       val buildArguments = (docker / DockerKeys.dockerBuildArguments).value
-      DockerBuild(dockerfile, DefaultDockerfileProcessor, imageNames, buildOptions, buildArguments, stageDir, dockerPath, log)
+      DockerBuild(dockerfile, DefaultDockerfileProcessor, imageNames, buildOptions, platforms, buildArguments, stageDir, dockerPath, log)
     },
     dockerPush := {
       val log = Keys.streams.value.log
@@ -52,6 +53,7 @@ object DockerSettings {
     },
     docker / dockerPath := sys.env.get("DOCKER").filter(_.nonEmpty).getOrElse("docker"),
     docker / buildOptions := BuildOptions(),
+    docker / platforms := Set.empty[Platform],
     docker / dockerBuildArguments := Map.empty
   )
 
