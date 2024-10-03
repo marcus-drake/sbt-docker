@@ -12,8 +12,8 @@ lazy val root = (project in file("."))
   )
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.2.11" % "test",
-  "org.apache.commons" % "commons-lang3" % "3.12.0"
+  "org.scalatest" %% "scalatest" % "3.2.19" % "test",
+  "org.apache.commons" % "commons-text" % "1.12.0"
 )
 
 scalacOptions := Seq("-deprecation", "-unchecked", "-feature")

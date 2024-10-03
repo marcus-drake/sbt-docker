@@ -21,7 +21,7 @@ object DockerTag {
     val command = dockerPath :: "tag" :: id.id :: name.toString :: Nil
     log.debug(s"Running command: '${command.mkString(" ")}'")
 
-    val processOutput = Process(command).lines(processLogger)
+    val processOutput = Process(command).lineStream(processLogger)
     processOutput.foreach { line =>
       log.info(line)
     }
