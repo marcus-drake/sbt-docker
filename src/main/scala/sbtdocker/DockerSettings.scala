@@ -68,7 +68,7 @@ object DockerSettings {
       (docker / Keys.mainClass).or(Compile / Keys.packageBin / Keys.mainClass).value
     },
     docker / dockerfile := {
-      val maybeMainClass = Keys.mainClass.in(docker).value
+      val maybeMainClass = (docker / Keys.mainClass).value
       maybeMainClass match {
         case None =>
           sys.error(
