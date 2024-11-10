@@ -12,7 +12,7 @@ lazy val root = (project in file("."))
   )
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.2.11" % "test",
+  "org.scalatest" %% "scalatest" % "3.2.19" % "test",
   "org.apache.commons" % "commons-text" % "1.11.0"
 )
 
