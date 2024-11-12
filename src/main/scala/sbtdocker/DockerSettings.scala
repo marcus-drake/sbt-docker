@@ -8,6 +8,7 @@ import sbtdocker.DockerKeys._
 import sbtdocker.staging.DefaultDockerfileProcessor
 
 object DockerSettings {
+
   @nowarn("msg=value imageName in object DockerKeys is deprecated")
   lazy val baseDockerSettings = Seq(
     docker := {
