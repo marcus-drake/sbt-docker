@@ -2,6 +2,7 @@ package sbtdocker
 
 import sbt._
 
+import scala.io.Source
 import scala.sys.process.{Process, ProcessLogger}
 
 object DockerPush {
@@ -41,18 +42,28 @@ object DockerPush {
       }
     )
 
-    val command = dockerPath :: "push" :: imageName.toString :: Nil
+    val isPodman = dockerPath.contains("podman")
+    val digestFileName = "digestFile"
+
+    val command = dockerPath :: "push" :: imageName.toString :: (if (!isPodman) Nil else List("--digestfile", digestFileName))
     log.debug(s"Running command: '${command.mkString(" ")}'")
 
     val process = Process(command)
     val exitCode = process ! processLog
     if (exitCode != 0) throw new DockerPushException(s"Failed to run 'docker push' on image $imageName. Exit code $exitCode")
 
-    val PushedImageDigestSha256 = ".* digest: sha256:([0-9a-f]+) .*".r
-
-    val imageDigest = lines.collect {
+    val digestPrefix = if(isPodman) "" else " digest: "
+    val PushedImageDigestSha256 = (s".*${digestPrefix}sha256:([0-9a-f]+).*").r
+    val imageDigest = (if(isPodman) {
+      val source = Source.fromFile(digestFileName)
+      val digestLines = source.getLines.toList
+      source.close()
+      digestLines
+    }
+    else lines).collect {
       case PushedImageDigestSha256(digest) => ImageDigest("sha256", digest)
     }.lastOption
+
 
     imageDigest match {
       case Some(digest) =>
