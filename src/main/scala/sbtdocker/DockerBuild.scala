@@ -23,49 +23,65 @@ object DockerBuild {
     processor: DockerfileProcessor,
     imageNames: Seq[ImageName],
     buildOptions: BuildOptions,
+    platforms: Set[Platform],
     buildArguments: Map[String, String],
     stageDir: File,
     dockerPath: String,
     log: Logger
   ): ImageId = {
-    dockerfile match {
-      case NativeDockerfile(path) =>
-        buildAndTag(imageNames, path, dockerPath, buildOptions, buildArguments, log)
 
-      case dockerfileLike: DockerfileLike =>
-        val staged = processor(dockerfileLike, stageDir)
+    (dockerfile, platforms.isEmpty) match {
 
-        apply(staged, imageNames, buildOptions, buildArguments, stageDir, dockerPath, log)
+      case (NativeDockerfile(dockerfilePath), true) =>
+        buildAndTag(
+          imageNames = imageNames,
+          dockerfilePath = dockerfilePath,
+          dockerPath = dockerPath,
+          buildOptions = buildOptions,
+          buildArguments = buildArguments,
+          log = log
+        )
+      case (dockerfileLike: DockerfileLike, true) =>
+        buildAndTag(
+          imageNames = imageNames,
+          dockerfilePath = buildDockerFile(processor, dockerfileLike, stageDir, log),
+          dockerPath = dockerPath,
+          buildOptions = buildOptions,
+          buildArguments = buildArguments,
+          log = log
+        )
+      case (NativeDockerfile(dockerfilePath), false) =>
+        multiPlatformBuild(
+          dockerPath = dockerPath,
+          dockerfilePath = dockerfilePath,
+          platforms = platforms,
+          imageNames = imageNames,
+          log = log
+        )
+      case (dockerfileLike: DockerfileLike, false) =>
+        multiPlatformBuild(
+          dockerPath = dockerPath,
+          dockerfilePath = buildDockerFile(processor, dockerfileLike, stageDir, log),
+          platforms = platforms,
+          imageNames = imageNames,
+          log = log
+        )
     }
   }
 
-  /**
-    * Build a Dockerfile using a provided docker binary.
-    *
-    * @param staged a staged Dockerfile to build.
-    * @param imageNames names of the resulting image
-    * @param stageDir stage dir
-    * @param dockerPath path to the docker binary
-    * @param buildOptions options for the build command
-    * @param log logger
-    */
-  def apply(
-    staged: StagedDockerfile,
-    imageNames: Seq[ImageName],
-    buildOptions: BuildOptions,
-    buildArguments: Map[String, String],
+  private[sbtdocker] def buildDockerFile(
+    processor: DockerfileProcessor,
+    dockerfileLike: DockerfileLike,
     stageDir: File,
-    dockerPath: String,
     log: Logger
-  ): ImageId = {
+  ): File = {
+    val staged = processor(dockerfileLike, stageDir)
     log.debug("Building Dockerfile:\n" + staged.instructionsString)
-
     log.debug(s"Preparing stage directory '${stageDir.getPath}'")
-
     clean(stageDir)
     val dockerfilePath = createDockerfile(staged, stageDir)
     prepareFiles(staged)
-    buildAndTag(imageNames, dockerfilePath, dockerPath, buildOptions, buildArguments, log)
+    dockerfilePath
   }
 
   private[sbtdocker] def clean(stageDir: File) = {
@@ -100,6 +116,25 @@ object DockerBuild {
     }
 
     imageId
+  }
+
+  private[sbtdocker] def multiPlatformBuild(
+    dockerPath: String,
+    dockerfilePath: File,
+    platforms: Set[Platform],
+    imageNames: Seq[ImageName],
+    log: Logger
+  ): ImageId = {
+
+    val builder = new DockerMultiPlatformBuilder(
+      dockerPath,
+      dockerfilePath,
+      platforms,
+      imageNames,
+      log
+    )
+
+    builder.run()
   }
 
   private[sbtdocker] def build(

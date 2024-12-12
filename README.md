@@ -18,7 +18,7 @@ Setup
 Add sbt-docker as a dependency in `project/plugins.sbt`:
 
 ```text
-addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.9.0")
+addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.11.0")
 ```
 
 ### Getting started

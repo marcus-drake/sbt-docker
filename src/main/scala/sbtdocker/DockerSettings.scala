@@ -8,23 +8,22 @@ import sbtdocker.staging.DefaultDockerfileProcessor
 object DockerSettings {
 
   lazy val baseDockerSettings = Seq(
-    docker := {
-      val log = Keys.streams.value.log
-      val dockerPath = (docker / DockerKeys.dockerPath).value
-      val buildOptions = (docker / DockerKeys.buildOptions).value
-      val stageDir = (docker / target).value
-      val dockerfile = (docker / DockerKeys.dockerfile).value
-      val imageNames = (docker / DockerKeys.imageNames).value
-      val buildArguments = (docker / DockerKeys.dockerBuildArguments).value
-      DockerBuild(dockerfile, DefaultDockerfileProcessor, imageNames, buildOptions, buildArguments, stageDir, dockerPath, log)
-    },
-    dockerPush := {
-      val log = Keys.streams.value.log
-      val dockerPath = (docker / DockerKeys.dockerPath).value
-      val imageNames = (docker / DockerKeys.imageNames).value
-
-      DockerPush(dockerPath, imageNames, log)
-    },
+    docker := DockerBuild(
+      dockerfile = (docker / DockerKeys.dockerfile).value,
+      processor = DefaultDockerfileProcessor,
+      imageNames = (docker / DockerKeys.imageNames).value,
+      buildOptions = (docker / DockerKeys.buildOptions).value,
+      platforms = (docker / DockerKeys.platforms).value,
+      buildArguments = (docker / DockerKeys.dockerBuildArguments).value,
+      stageDir = (docker / target).value,
+      dockerPath = (docker / DockerKeys.dockerPath).value,
+      log = Keys.streams.value.log
+    ),
+    dockerPush := DockerPush(
+      dockerPath = (docker / DockerKeys.dockerPath).value,
+      imageNames = (docker / DockerKeys.imageNames).value,
+      log = Keys.streams.value.log
+    ),
     dockerBuildAndPush := Def.taskDyn {
       docker.value
       Def.task {
@@ -52,6 +51,7 @@ object DockerSettings {
     },
     docker / dockerPath := sys.env.get("DOCKER").filter(_.nonEmpty).getOrElse("docker"),
     docker / buildOptions := BuildOptions(),
+    docker / platforms := Set.empty[Platform],
     docker / dockerBuildArguments := Map.empty
   )
 
@@ -68,7 +68,7 @@ object DockerSettings {
       (docker / Keys.mainClass).or(Compile / Keys.packageBin / Keys.mainClass).value
     },
     docker / dockerfile := {
-      val maybeMainClass = Keys.mainClass.in(docker).value
+      val maybeMainClass = (docker / Keys.mainClass).value
       maybeMainClass match {
         case None =>
           sys.error(
