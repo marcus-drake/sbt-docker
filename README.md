@@ -3,7 +3,6 @@ sbt-docker
 
 sbt-docker is an [sbt][sbt] plugin that builds and pushes [Docker][docker] images for your project.
 
-[![Build Status](https://travis-ci.org/marcuslonnberg/sbt-docker.svg?branch=master)](https://travis-ci.org/marcuslonnberg/sbt-docker)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/se.marcuslonnberg/sbt-docker/badge.svg)](https://maven-badges.herokuapp.com/maven-central/se.marcuslonnberg/sbt-docker)
 
 Requirements
@@ -18,7 +17,7 @@ Setup
 Add sbt-docker as a dependency in `project/plugins.sbt`:
 
 ```text
-addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.9.0")
+addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.11.0")
 ```
 
 ### Getting started
