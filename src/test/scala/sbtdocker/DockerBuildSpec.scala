@@ -125,6 +125,18 @@ class DockerBuildSpec extends AnyFreeSpec with Matchers {
       DockerBuild.parseImageId(lines) shouldEqual Some(ImageId("353fcb84af6b"))
     }
 
+    "Docker build with containerd output" in {
+      val lines = Seq(
+        "[info] #10 exporting layers 2.8s done",
+        "[info] #10 exporting manifest sha256:7f8c52951645245ac6bdc0e213330a88834ebcce340b32a834287bb6bfa6d5cb 0.0s done",
+        "[info] #10 exporting config sha256:9f7f478055830d4b6f0981b76dcb33be52c1ef1496c71b2dbbecf7336ede58a2 0.0s done",
+        "[info] #10 exporting attestation manifest sha256:ba07dabd29c79fa4f8f55b2d691cc740638e4b4d6abe6eb07aa8774f0b203cc1",
+        "[info] #10 exporting attestation manifest sha256:ba07dabd29c79fa4f8f55b2d691cc740638e4b4d6abe6eb07aa8774f0b203cc1 0.1s done",
+        "[info] #10 exporting manifest list sha256:bb462cb506fd951efc8847f7f4c9a227b5908246101c1d9e5685daf632ce9c51 0.0s done"
+      )
+      DockerBuild.parseImageId(lines) shouldEqual Some(ImageId("bb462cb506fd951efc8847f7f4c9a227b5908246101c1d9e5685daf632ce9c51"))
+    }
+
     "Docker buildx output" in {
       val lines = Seq(
         "#7 exporting layers 0.4s done",
