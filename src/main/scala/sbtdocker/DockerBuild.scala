@@ -198,6 +198,7 @@ object DockerBuild {
 
   private val SuccessfullyBuilt = "^Successfully built ([0-9a-f]+)$".r
   private val SuccessfullyBuiltBuildKit = ".* writing image sha256:([0-9a-f]+) .*\\bdone$".r
+  private val SuccessfullyBuiltBuildxDangling = ".* naming to moby-dangling@sha256:([0-9a-f]+) .*\\bdone$".r
   private val SuccessfullyBuiltContainerd = ".* exporting manifest list sha256:([0-9a-f]+) .*\\bdone$".r
   private val SuccessfullyBuiltBuildx = ".* exporting config sha256:([0-9a-f]+) .*\\bdone$".r
   private val SuccessfullyBuiltPodman = "^([0-9a-f]{64})$".r
@@ -207,6 +208,7 @@ object DockerBuild {
     lines.collect {
       case SuccessfullyBuilt(id) => ImageId(id)
       case SuccessfullyBuiltBuildKit(id) => ImageId(id)
+      case SuccessfullyBuiltBuildxDangling(id) => ImageId(id)
       case SuccessfullyBuiltContainerd(id) => ImageId(id)
       case SuccessfullyBuiltBuildx(id) => ImageId(id)
       case SuccessfullyBuiltPodman(id) => ImageId(id)
