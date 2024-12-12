@@ -1,5 +1,7 @@
 package sbtdocker
 
+import scala.annotation.nowarn
+
 import sbt.Keys.target
 import sbt._
 import sbtdocker.DockerKeys._
@@ -7,6 +9,7 @@ import sbtdocker.staging.DefaultDockerfileProcessor
 
 object DockerSettings {
 
+  @nowarn("msg=value imageName in object DockerKeys is deprecated")
   lazy val baseDockerSettings = Seq(
     docker := {
       val log = Keys.streams.value.log
@@ -68,7 +71,7 @@ object DockerSettings {
       (docker / Keys.mainClass).or(Compile / Keys.packageBin / Keys.mainClass).value
     },
     docker / dockerfile := {
-      val maybeMainClass = Keys.mainClass.in(docker).value
+      val maybeMainClass = (docker / Keys.mainClass).value
       maybeMainClass match {
         case None =>
           sys.error(
