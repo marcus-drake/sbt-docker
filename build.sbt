@@ -1,6 +1,6 @@
 name := "sbt-docker"
 organization := "se.marcuslonnberg"
-organizationHomepage := Some(url("https://github.com/marcuslonnberg"))
+organizationHomepage := Some(url("https://github.com/marcus-drake"))
 
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
@@ -18,9 +18,9 @@ libraryDependencies ++= Seq(
 
 scalacOptions := Seq("-deprecation", "-unchecked", "-feature")
 
-licenses := Seq("MIT License" -> url("https://github.com/marcuslonnberg/sbt-docker/blob/master/LICENSE"))
-homepage := Some(url("https://github.com/marcuslonnberg/sbt-docker"))
-scmInfo := Some(ScmInfo(url("https://github.com/marcuslonnberg/sbt-docker"), "scm:git:git://github.com:marcuslonnberg/sbt-docker.git"))
+licenses := Seq("MIT License" -> url("https://github.com/marcus-drake/sbt-docker/blob/master/LICENSE"))
+homepage := Some(url("https://github.com/marcus-drake/sbt-docker"))
+scmInfo := Some(ScmInfo(url("https://github.com/marcus-drake/sbt-docker"), "scm:git:git://github.com:marcus-drake/sbt-docker.git"))
 
 publishMavenStyle := true
 publishTo := {
@@ -36,8 +36,8 @@ pomIncludeRepository := { _ => false}
 pomExtra := {
   <developers>
     <developer>
-      <id>marcuslonnberg</id>
-      <name>Marcus Lönnberg</name>
+      <id>marcus-drake</id>
+      <name>Marcus Drake</name>
       <url>http://marcuslonnberg.se</url>
     </developer>
   </developers>
