@@ -2,8 +2,6 @@ import sbtrelease._
 import ReleaseStateTransformations._
 import ReleaseKeys._
 
-releasePublishArtifactsAction := PgpKeys.publishSigned.value
-
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
