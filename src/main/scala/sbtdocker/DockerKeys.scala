@@ -15,6 +15,10 @@ object DockerKeys {
   val dockerPath = settingKey[String]("Path to the Docker binary.")
   val buildOptions = settingKey[BuildOptions]("Options for the Docker build command.")
 
+  val cleanStageDir = taskKey[Unit]("Clean docker staging directory")
+  val writeDockerfile = taskKey[File]("Write Dockerfile")
+  val buildAndTag = taskKey[ImageId]("Run docker build")
+
   val dockerBuildArguments = settingKey[Map[String, String]](
     "Set build-time arguments for Docker image. Reference the argument keys with ARG and ENV instructions in the Dockerfile."
   )
